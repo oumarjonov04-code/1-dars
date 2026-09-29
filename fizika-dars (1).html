@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fizika fani nimani o'rganadi?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #141829;
+    --bg-2: #1c2138;
+    --panel: #1f253f;
+    --panel-2: #262d4c;
+    --ink: #EDE8DC;
+    --ink-dim: #B9B6C8;
+    --line: #363c5c;
+    --amber: #F2A93B;
+    --amber-deep: #C97F1E;
+    --teal: #59D6C4;
+    --teal-deep: #2F9E8F;
+    --danger: #E8735F;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html{ scroll-padding-top: env(safe-area-inset-top, 0px); height:100%; }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    min-height:100%;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(89,214,196,0.08), transparent 40%),
+      radial-gradient(circle at 90% 10%, rgba(242,169,59,0.10), transparent 45%);
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+    line-height: 1.6;
+  }
+  h1,h2,h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0 0 .4em 0;
+    color: #FBF7EE;
+  }
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* HERO */
+  .hero{
+    padding: 56px 20px 40px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+  .hero .kicker{
+    color: var(--teal);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+  }
+  .hero h1{ font-size: clamp(2rem, 6vw, 3rem); max-width: 14ch; }
+  .hero p{ color: var(--ink-dim); max-width: 46ch; font-size: 1.05rem; }
+  .hero-orbit{
+    margin-top: 28px;
+    display:flex;
+    align-items:center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .plan-chip{
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: .85rem;
+    color: var(--ink-dim);
+    background: var(--panel);
+  }
+  .plan-chip b{ color: var(--amber); }
+
+  section{ padding: 46px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type{ border-bottom: none; }
+  section > .num{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-dim);
+    font-size: .95rem;
+    margin-bottom: 6px;
+  }
+  section h2{ font-size: clamp(1.4rem, 4vw, 1.9rem); }
+  section p{ font-size: 1.02rem; }
+  .lead{ color: var(--ink-dim); max-width: 60ch; }
+
+  .term{
+    background: rgba(242,169,59,0.14);
+    border-bottom: 2px solid var(--amber);
+    color: #FBF7EE;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .term.cool{
+    background: rgba(89,214,196,0.14);
+    border-bottom: 2px solid var(--teal);
+  }
+
+  .example-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 12px;
+    margin: 18px 0 4px;
+  }
+  .example{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: .92rem;
+    color: var(--ink-dim);
+  }
+  .example strong{ color: var(--ink); display:block; margin-bottom:2px; font-size: .95rem;}
+
+  /* SIM PANEL */
+  .sim{
+    margin-top: 26px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .sim-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+  }
+  .sim-head span{ font-size:.82rem; color: var(--ink-dim); }
+  .sim-canvas-wrap{ padding: 10px; }
+  canvas{ display:block; width:100%; height: auto; background: var(--bg-2); border-radius: 10px; touch-action: none; }
+  .sim-controls{
+    display:flex; flex-wrap:wrap; gap:8px;
+    padding: 14px 18px 18px;
+  }
+  button.mode-btn{
+    font-family:'Manrope', sans-serif;
+    font-weight:600;
+    font-size: .85rem;
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dim);
+    cursor:pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  button.mode-btn:hover{ border-color: var(--amber); color: var(--ink); }
+  button.mode-btn.active{
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #1a1204;
+  }
+  .slider-row{
+    display:flex; align-items:center; gap:12px;
+    padding: 0 18px 18px;
+    color: var(--ink-dim);
+    font-size: .88rem;
+  }
+  .slider-row input[type=range]{
+    flex:1;
+    accent-color: var(--teal);
+  }
+  .phase-tag{
+    font-weight:700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: .78rem;
+    background: var(--teal-deep);
+    color: #04211d;
+    min-width: 70px;
+    text-align:center;
+  }
+
+  /* QUIZ */
+  .quiz-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .quiz-card p.q{ font-weight:700; color:#FBF7EE; margin: 0 0 12px; }
+  .opt{
+    display:block;
+    width:100%;
+    text-align:left;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor:pointer;
+    font-family:'Manrope',sans-serif;
+    font-size: .92rem;
+    transition: border-color .15s, background .15s;
+  }
+  .opt:hover{ border-color: var(--teal); }
+  .opt.correct{ background: rgba(89,214,196,0.18); border-color: var(--teal); }
+  .opt.wrong{ background: rgba(232,115,95,0.16); border-color: var(--danger); }
+
+  footer{
+    text-align:center;
+    color: var(--ink-dim);
+    font-size: .85rem;
+    padding: 40px 20px 10px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    * { animation-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap" style="padding:0;">
+    <div class="kicker">7-sinf · Fizika</div>
+    <h1>Fizika fani nimani o'rganadi?</h1>
+    <p>Har kuni ko'zimiz oldida sodir bo'ladigan — tosh yerga tushishidan tortib, choy sovishigacha — barcha o'zgarishlarning o'z qonuni bor. Fizika aynan shu qonunlarni o'rganadi.</p>
+    <div class="hero-orbit">
+      <div class="plan-chip"><b>1.</b> Mexanik hodisalar</div>
+      <div class="plan-chip"><b>2.</b> Molekulyar fizika va termodinamika</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section id="kirish">
+    <div class="num">Kirish</div>
+    <h2>Fizik hodisa nima?</h2>
+    <p class="lead">Tabiatda jismning holati yoki shakli o'zgarishi bilan boradigan har qanday jarayon <span class="term">fizik hodisa</span> deyiladi. Muhim jihati shundaki — bunda modda yangi moddaga aylanmaydi: muz suvga aylanganda ham, ular ikkalasi ham xuddi shu H₂O moddasi.</p>
+    <div class="example-row">
+      <div class="example"><strong>⚽ Mexanik</strong>Jismlarning harakati va tinch turishi</div>
+      <div class="example"><strong>🌡️ Issiqlik</strong>Qizish, sovish, agregat holat o'zgarishi</div>
+      <div class="example"><strong>⚡ Elektr</strong>Zaryadlarning harakati</div>
+      <div class="example"><strong>💡 Yorug'lik</strong>Nurning tarqalishi va sinishi</div>
+    </div>
+    <p>Quyida shu hodisalarning ikkitasini — <span class="term">mexanik</span> va <span class="term cool">molekulyar-issiqlik</span> hodisalarini — o'zingiz boshqarib, jonli ko'rasiz.</p>
+  </section>
+
+  <section id="mexanika">
+    <div class="num">1-bo'lim</div>
+    <h2>Mexanik hodisalar</h2>
+    <p class="lead">Jismning fazodagi o'rni vaqt o'tishi bilan o'zgarishi <span class="term">mexanik harakat</span> deyiladi. Bunga tosh uloqtirilganda uning uchishi, soat mayatnigining tebranishi yoki g'ildirakning aylanishi kabi hodisalar misol bo'ladi.</p>
+    <div class="example-row">
+      <div class="example"><strong>Erkin tushish</strong>Daraxtdan uzilgan olma yerga tortiladi</div>
+      <div class="example"><strong>Tebranma harakat</strong>Ko'prikning yengil tebranishi, mayatnik soat</div>
+      <div class="example"><strong>Aylanma harakat</strong>Velosiped g'ildiragi, Yerning o'z o'qi atrofida aylanishi</div>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <strong>Simulyatsiya</strong>
+        <span>Rejimni tanlang va kuzating</span>
+      </div>
+      <div class="sim-canvas-wrap">
+        <canvas id="mechCanvas" width="680" height="360"></canvas>
+      </div>
+      <div class="sim-controls">
+        <button class="mode-btn active" data-mode="fall">Erkin tushish</button>
+        <button class="mode-btn" data-mode="pendulum">Mayatnik tebranishi</button>
+        <button class="mode-btn" data-mode="rotate">Aylanma harakat</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="molekulyar">
+    <div class="num">2-bo'lim</div>
+    <h2>Molekulyar fizika va termodinamika</h2>
+    <p class="lead">Har qanday modda ko'zga ko'rinmas mayda zarrachalar — <span class="term cool">molekulalar</span>dan tashkil topgan. Ularning tartibi va harakat tezligi moddaning <span class="term cool">agregat holati</span>ni (qattiq, suyuq, gaz) va <span class="term cool">harorati</span>ni belgilaydi: harorat oshsa, molekulalar tezroq harakatlanadi.</p>
+    <div class="example-row">
+      <div class="example"><strong>❄️ Qattiq holat</strong>Molekulalar tartibli, joyida tebranadi</div>
+      <div class="example"><strong>💧 Suyuq holat</strong>Molekulalar bir-biriga yaqin, lekin oqadi</div>
+      <div class="example"><strong>💨 Gaz holati</strong>Molekulalar erkin va tez harakatlanadi</div>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <strong>Simulyatsiya</strong>
+        <span id="phaseWrap">Holat: <span class="phase-tag" id="phaseTag">SUYUQ</span></span>
+      </div>
+      <div class="sim-canvas-wrap">
+        <canvas id="thermoCanvas" width="680" height="360"></canvas>
+      </div>
+      <div class="slider-row">
+        <span>❄️ Sovuq</span>
+        <input type="range" id="tempSlider" min="0" max="100" value="45">
+        <span>🔥 Issiq</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="tekshir">
+    <div class="num">O'zingizni tekshiring</div>
+    <h2>3 ta savol</h2>
+    <p class="lead">Har bir javobni bosing — to'g'ri va noto'g'ri variant darhol ko'rinadi.</p>
+
+    <div class="quiz-card">
+      <p class="q">1. Muzning erib, suvga aylanishi qanday hodisa hisoblanadi?</p>
+      <button class="opt" data-correct="false">Kimyoviy hodisa, chunki modda o'zgaradi</button>
+      <button class="opt" data-correct="true">Fizik hodisa, chunki modda H₂O bo'lib qoladi</button>
+      <button class="opt" data-correct="false">Bu fizika o'rganmaydigan hodisa</button>
+    </div>
+
+    <div class="quiz-card">
+      <p class="q">2. Soat mayatnigining tebranishi qaysi hodisalar turkumiga kiradi?</p>
+      <button class="opt" data-correct="false">Molekulyar hodisa</button>
+      <button class="opt" data-correct="true">Mexanik hodisa</button>
+      <button class="opt" data-correct="false">Elektr hodisasi</button>
+    </div>
+
+    <div class="quiz-card">
+      <p class="q">3. Harorat oshganda moddaning molekulalari qanday harakatlanadi?</p>
+      <button class="opt" data-correct="false">Sekinlashadi va bir joyda qotib qoladi</button>
+      <button class="opt" data-correct="false">Harakat umuman o'zgarmaydi</button>
+      <button class="opt" data-correct="true">Tezroq va erkinroq harakatlanadi</button>
+    </div>
+  </section>
+
+</div>
+
+<footer>7-sinf fizika · 1-mavzu — Fizika fani nimani o'rganadi? Fizik hodisalar</footer>
+
+<script>
+// ---------- MECHANICS SIMULATION ----------
+const mechCanvas = document.getElementById('mechCanvas');
+const mctx = mechCanvas.getContext('2d');
+let mechMode = 'fall';
+let t = 0;
+
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    mechMode = btn.dataset.mode;
+    t = 0;
+  });
+});
+
+function drawFall(time){
+  const w = mechCanvas.width, h = mechCanvas.height;
+  mctx.clearRect(0,0,w,h);
+  // ground
+  mctx.strokeStyle = '#363c5c';
+  mctx.beginPath(); mctx.moveTo(0,h-30); mctx.lineTo(w,h-30); mctx.stroke();
+  const cycle = (time*0.9) % 2.6;
+  const travel = h-70;
+  const progress = Math.min(cycle*cycle*0.6, 1);
+  const y = 40 + progress*travel;
+  mctx.fillStyle = '#F2A93B';
+  mctx.beginPath(); mctx.arc(w/2, y, 16, 0, Math.PI*2); mctx.fill();
+  mctx.fillStyle = '#B9B6C8';
+  mctx.font = '13px Manrope';
+  mctx.fillText('Erkin tushuvchi jism', w/2-70, 24);
+  if(progress>=1){
+    mctx.fillStyle = 'rgba(89,214,196,0.5)';
+    mctx.beginPath(); mctx.ellipse(w/2, h-30, 22, 6, 0,0,Math.PI*2); mctx.fill();
+  }
+}
+
+function drawPendulum(time){
+  const w = mechCanvas.width, h = mechCanvas.height;
+  mctx.clearRect(0,0,w,h);
+  const pivotX = w/2, pivotY = 40, len = 220;
+  const angle = Math.sin(time*2.2) * 0.9;
+  const bobX = pivotX + Math.sin(angle)*len;
+  const bobY = pivotY + Math.cos(angle)*len;
+  mctx.strokeStyle = '#59D6C4';
+  mctx.lineWidth = 2;
+  mctx.beginPath(); mctx.moveTo(pivotX,pivotY); mctx.lineTo(bobX,bobY); mctx.stroke();
+  mctx.fillStyle = '#59D6C4';
+  mctx.beginPath(); mctx.arc(pivotX,pivotY,5,0,Math.PI*2); mctx.fill();
+  mctx.fillStyle = '#F2A93B';
+  mctx.beginPath(); mctx.arc(bobX,bobY,16,0,Math.PI*2); mctx.fill();
+  mctx.fillStyle = '#B9B6C8';
+  mctx.font = '13px Manrope';
+  mctx.fillText('Mayatnik tebranishi', pivotX-70, 24);
+}
+
+function drawRotate(time){
+  const w = mechCanvas.width, h = mechCanvas.height;
+  mctx.clearRect(0,0,w,h);
+  const cx = w/2, cy = h/2, r = 110;
+  mctx.strokeStyle = '#363c5c';
+  mctx.lineWidth = 3;
+  mctx.beginPath(); mctx.arc(cx,cy,r,0,Math.PI*2); mctx.stroke();
+  const angle = time*2.4;
+  const px = cx + Math.cos(angle)*r;
+  const py = cy + Math.sin(angle)*r;
+  mctx.strokeStyle = '#59D6C4';
+  mctx.lineWidth = 2;
+  mctx.beginPath(); mctx.moveTo(cx,cy); mctx.lineTo(px,py); mctx.stroke();
+  mctx.fillStyle = '#F2A93B';
+  mctx.beginPath(); mctx.arc(px,py,13,0,Math.PI*2); mctx.fill();
+  mctx.fillStyle = '#B9B6C8';
+  mctx.beginPath(); mctx.arc(cx,cy,4,0,Math.PI*2); mctx.fill();
+  mctx.font = '13px Manrope';
+  mctx.fillText("G'ildirakning aylanma harakati", cx-100, 24);
+}
+
+function mechLoop(){
+  t += 0.016;
+  if(mechMode==='fall') drawFall(t);
+  else if(mechMode==='pendulum') drawPendulum(t);
+  else drawRotate(t);
+  requestAnimationFrame(mechLoop);
+}
+mechLoop();
+
+// ---------- THERMO / MOLECULAR SIMULATION ----------
+const thermoCanvas = document.getElementById('thermoCanvas');
+const tctx = thermoCanvas.getContext('2d');
+const tempSlider = document.getElementById('tempSlider');
+const phaseTag = document.getElementById('phaseTag');
+
+const NUM = 40;
+let particles = [];
+function initParticles(){
+  particles = [];
+  for(let i=0;i<NUM;i++){
+    particles.push({
+      x: Math.random()*thermoCanvas.width,
+      y: Math.random()*thermoCanvas.height,
+      vx: (Math.random()-0.5),
+      vy: (Math.random()-0.5),
+      homeX: 0, homeY: 0
+    });
+  }
+  // assign grid homes for solid state
+  const cols = 8, rows = 5;
+  const padX = 60, padY = 40;
+  const stepX = (thermoCanvas.width-2*padX)/(cols-1);
+  const stepY = (thermoCanvas.height-2*padY)/(rows-1);
+  for(let i=0;i<particles.length;i++){
+    const c = i % cols, r = Math.floor(i/cols) % rows;
+    particles[i].homeX = padX + c*stepX;
+    particles[i].homeY = padY + r*stepY;
+  }
+}
+initParticles();
+
+function updatePhaseLabel(v){
+  let label, color;
+  if(v < 33){ label='QATTIQ'; color='#59D6C4'; }
+  else if(v < 66){ label='SUYUQ'; color='#F2A93B'; }
+  else { label='GAZ'; color='#E8735F'; }
+  phaseTag.textContent = label;
+  phaseTag.style.background = color;
+  phaseTag.style.color = '#0c0c12';
+}
+
+function thermoLoop(){
+  const v = parseInt(tempSlider.value,10);
+  updatePhaseLabel(v);
+  const speed = 0.3 + (v/100)*4.2;
+  const w = thermoCanvas.width, h = thermoCanvas.height;
+  tctx.clearRect(0,0,w,h);
+  tctx.strokeStyle = '#363c5c';
+  tctx.strokeRect(4,4,w-8,h-8);
+
+  const solidness = Math.max(0, 1 - v/40); // 1 = fully solid grid, 0 = free gas
+
+  particles.forEach(p=>{
+    if(solidness > 0.05){
+      // pulled toward home grid position, jitter scaled by temperature
+      const pull = 0.12 * solidness;
+      p.vx += (p.homeX - p.x) * pull * 0.02;
+      p.vy += (p.homeY - p.y) * pull * 0.02;
+      p.x += (Math.random()-0.5)*speed*0.5*(1) + p.vx;
+      p.y += (Math.random()-0.5)*speed*0.5*(1) + p.vy;
+      p.vx *= 0.8; p.vy *= 0.8;
+    } else {
+      p.x += p.vx*speed;
+      p.y += p.vy*speed;
+      if(p.x<10||p.x>w-10) p.vx*=-1;
+      if(p.y<10||p.y>h-10) p.vy*=-1;
+      p.x = Math.max(10,Math.min(w-10,p.x));
+      p.y = Math.max(10,Math.min(h-10,p.y));
+    }
+    tctx.fillStyle = v<33 ? '#59D6C4' : (v<66 ? '#F2A93B' : '#E8735F');
+    tctx.beginPath();
+    tctx.arc(p.x,p.y,6,0,Math.PI*2);
+    tctx.fill();
+  });
+
+  requestAnimationFrame(thermoLoop);
+}
+thermoLoop();
+
+// ---------- QUIZ ----------
+document.querySelectorAll('.quiz-card').forEach(card=>{
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(card.dataset.answered) return;
+      card.dataset.answered = 'true';
+      opts.forEach(o=>{
+        if(o.dataset.correct === 'true') o.classList.add('correct');
+        else if(o===opt) o.classList.add('wrong');
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>
